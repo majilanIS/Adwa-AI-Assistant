@@ -235,6 +235,10 @@ def get_history():
 # Run Server
 # ========================
 
+import os
+
 if __name__ == "__main__":
+    print("🚀 App is starting...")  # debug
+
     port = int(os.environ.get("PORT", 10000))
     app.run(host="0.0.0.0", port=port)
