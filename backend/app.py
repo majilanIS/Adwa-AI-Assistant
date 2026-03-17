@@ -31,7 +31,7 @@ if not groq_api_key:
 # ========================
 # Embeddings & Vector DB
 # ========================
-embeddings = HuggingFaceEmbeddings(model_name="BAAI/bge-base-en-v1.5")
+embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
 
 persist_directory = "./adwa_db"
 
