@@ -1,3 +1,4 @@
+langchain.chains
 flask
 flask-cors
 python-dotenv
