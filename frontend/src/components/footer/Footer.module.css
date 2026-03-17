@@ -1,0 +1,41 @@
+.footer {
+  background: rgba(30, 30, 47, 0.85);
+  color: #FFD700;
+  text-align: center;
+  padding: 0.35rem 1rem; /* reduce height */
+  font-size: 10px;
+  backdrop-filter: blur(6px);
+  position: fixed; /* fixed at bottom */
+  left: 0;
+  bottom: 0;
+  width: 100vw;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.inputAreaRow {
+  position: fixed; /* fixed just above footer */
+  bottom: 2.8rem; /* adjust so it's just above the footer */
+  left: 0;
+  width: 100%;
+  z-index: 210;
+  display: flex;
+  justify-content: center;
+  padding: 0 1rem;
+}
+
+.inputWrapper {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 600px;
+  background: rgba(255,255,255,0.95);
+  border-radius: 32px;
+  border: 1.5px solid var(--brown-light);
+  padding: 6px 16px 6px 22px;
+  gap: 8px;
+  box-shadow: 0 2px 12px rgba(255, 152, 0, 0.08);
+}

@@ -1,0 +1,16 @@
+{
+  "name": "Adwa AI Assistant",
+  "short_name": "AdwaAI",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#181a20",
+  "theme_color": "#ff9800",
+  "description": "Historical chat assistant for the Battle of Adwa.",
+  "icons": [
+    {
+      "src": "/adwa-icon.svg",
+      "sizes": "64x64",
+      "type": "image/svg+xml"
+    }
+  ]
+}

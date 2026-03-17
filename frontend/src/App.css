@@ -1,0 +1,39 @@
+
+body {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #181a20 0%, #232946 100%);
+  background-attachment: fixed;
+  background-size: cover;
+  color: #f3f4f6;
+  position: relative;
+  overflow-x: hidden;
+}
+
+.gravity-emojis {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.emoji {
+  position: absolute;
+  font-size: 2.5rem;
+  opacity: 0.7;
+  animation: emojiGravity 12s linear infinite;
+}
+
+.emoji1 { left: 10vw; top: 80vh; animation-delay: 0s; }
+.emoji2 { left: 30vw; top: 85vh; animation-delay: 2s; }
+.emoji3 { left: 50vw; top: 90vh; animation-delay: 4s; }
+.emoji4 { left: 70vw; top: 95vh; animation-delay: 6s; }
+.emoji5 { left: 90vw; top: 92vh; animation-delay: 8s; }
+
+@keyframes emojiGravity {
+  0% { transform: translateY(0) scale(1); opacity: 0.7; }
+  50% { transform: translateY(-60vh) scale(1.1); opacity: 0.9; }
+  100% { transform: translateY(-120vh) scale(0.95); opacity: 0.3; }
+}

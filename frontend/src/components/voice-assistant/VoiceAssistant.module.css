@@ -1,0 +1,117 @@
+.voiceAssistantContainer{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+/* microphone button */
+
+.microphone_btn{
+  border:none;
+  background:#f1f5f9;
+  color:#2563eb;
+
+  width:40px;
+  height:40px;
+
+  border-radius:50%;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  cursor:pointer;
+
+  transition:all 0.2s ease;
+}
+
+.microphone_btn:hover{
+  background:#2563eb;
+  color:white;
+}
+
+/* listening state */
+
+.listening{
+  background:red;
+  color:white;
+}
+
+/* wave container */
+
+.waveContainer{
+  display:flex;
+  gap:4px;
+  align-items:center;
+}
+
+/* wave bars */
+
+.waveContainer span{
+  width:4px;
+  height:14px;
+  background:#2563eb;
+
+  animation:wave 1s infinite ease-in-out;
+}
+
+.waveContainer span:nth-child(2){
+  animation-delay:0.2s;
+}
+
+.waveContainer span:nth-child(3){
+  animation-delay:0.4s;
+}
+
+.waveContainer span:nth-child(4){
+  animation-delay:0.6s;
+}
+
+/* wave animation */
+
+@keyframes wave{
+
+  0%{
+    transform:scaleY(1);
+  }
+
+  50%{
+    transform:scaleY(2);
+  }
+
+  100%{
+    transform:scaleY(1);
+  }
+
+}
+
+/* assistant response */
+
+/* assistant response */
+.assistant_response{
+  background:#e5e7eb;
+  padding:10px 14px;
+  border-radius:10px;
+  font-size:14px;
+  margin-top:6px;
+}
+
+/* user input */
+.user_input {
+  background: #f3f4f6;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  margin-top: 10px;
+  color: #374151;
+}
+
+/* error message */
+.error_message {
+  color: #dc2626;
+  background: #fee2e2;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  margin-top: 10px;
+}
