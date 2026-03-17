@@ -1,14 +1,10 @@
-
-flask
 flask-cors
-python-dotenv
-langchain
-langchain-core
-langchain-community
-langchain-text-splitters
-langchain-huggingface
-langchain-groq
-chromadb
-sentence-transformers
-pypdf
-torch --index-url https://download.pytorch.org/whl/cpu
+langchain>=0.1.0,<0.2
+langchain-core>=0.1.40,<0.2
+langchain-community>=0.0.10,<0.1
+langchain-groq>=0.1.0,<0.2
+langchain-chroma>=0.1.0,<0.2
+sentence-transformers>=2.2.0
+pypdf>=3.17.0
+flask>=2.3.0
+python-dotenv>=1.0.0
