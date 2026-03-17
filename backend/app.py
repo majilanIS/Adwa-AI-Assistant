@@ -8,8 +8,7 @@ from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import Chroma
 from langchain_groq import ChatGroq
 from langchain_core.prompts import ChatPromptTemplate
-from langchain.chains.combine_documents import create_stuff_documents_chain
-from langchain.chains import create_retrieval_chain
+from langchain_core.runnables import RunnableParallel, RunnablePassthrough
 from prompt import prompt
 from langdetect import detect
 import traceback
@@ -94,14 +93,13 @@ llm = ChatGroq(
 
 prompt_template = ChatPromptTemplate.from_template(prompt)
 
-document_chain = create_stuff_documents_chain(
-    llm,
-    prompt_template
-)
+# document_chain: LLM + prompt
+document_chain = llm | prompt_template
 
-rag_chain = create_retrieval_chain(
-    retriever,
-    document_chain
+# rag_chain: RAG pipeline using RunnableParallel and RunnablePassthrough
+rag_chain = (
+    {"context": retriever, "question": RunnablePassthrough()}
+    | document_chain
 )
 
 # ========================
@@ -163,13 +161,8 @@ def chat():
         # Run RAG
         try:
 
-            result = rag_chain.invoke({
-                "input": message,
-                "question": message,
-                "language": language
-            })
-
-            answer = result.get("answer")
+            result = rag_chain.invoke(message)
+            answer = result
 
         except:
             answer = "I could not generate an answer."
@@ -222,13 +215,7 @@ def voice():
 
     try:
 
-        result = rag_chain.invoke({
-            "input": text,
-            "question": text,
-            "language": "en"
-        })
-
-        answer = result.get("answer")
+        answer = rag_chain.invoke(text)
 
         return jsonify({
             "response": answer
