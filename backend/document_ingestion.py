@@ -1,71 +1,54 @@
-from langchain_community.vectorstores import Chroma
-from langchain_huggingface import HuggingFaceEmbeddings
-from langchain_groq import ChatGroq
+from langchain_community.document_loaders import PyPDFLoader, DirectoryLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_community.document_loaders import PyPDFDirectoryLoader
-import os
-import sys
+from sentence_transformers import SentenceTransformer
+from typing import List
+from langchain_core.documents import Document
 
 
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-from prompt import prompt
+def load_pdf_file(data):
+    loader = DirectoryLoader(
+        data,
+        glob="*.pdf",
+        loader_cls=PyPDFLoader
+    )
+    documents = loader.load()
+    return documents
 
 
-# Map each PDF filename to its Google Drive link
-pdf_links = {
-    "short historical note-2.pdf": "https://drive.google.com/file/d/17yCcBtWO840MSoW46_KmHr9bBkRekKVz/view?usp=sharing",
-    "paulos_milkias_getachew_metaferia_the_battle_ofbook4you.pdf": "https://drive.google.com/file/d/1wBZsQa2Ja_3ParQh59YDKEZjWsOvGrKc/view?usp=sharing",
-    "battle_of_adwa_overview.pdf": "https://drive.google.com/file/d/1o6BBKqGZHZCBkXSU-W3zNutGPGIe9L7S/view?usp=sharing",
-    "short history about battle of Adwa.pdf": "https://drive.google.com/file/d/1KI3oSXPYsAoDmwyuogb-tKLmWYfK7sD8/view?usp=sharing",
-    "The_Battle_of_Adwa_African_Victory_in_the_Age_of_Empire_Raymond.pdf": "https://drive.google.com/file/d/1okoxNtQgh8itpoTttLmu8F11W0AvWau1/view?usp=sharing"
-}
-
-loader = PyPDFDirectoryLoader("./data")
-documents = loader.load()
-
-# Attach the correct Google Drive link as metadata to each document
-for doc in documents:
-    filename = os.path.basename(doc.metadata.get("source", ""))
-    if filename in pdf_links:
-        doc.metadata["source"] = pdf_links[filename]
-
-splitter = RecursiveCharacterTextSplitter(
-    chunk_size=1000,
-    chunk_overlap=200
-)
-
-chunks = splitter.split_documents(documents)
-
-embeddings = HuggingFaceEmbeddings(
-    model_name="BAAI/bge-base-en-v1.5"
-)
-
-vectorstore = Chroma.from_documents(
-    documents=chunks,
-    embedding=embeddings,
-    persist_directory="./adwa_db"
-)
-
-vectorstore.persist()
-
-print("Vector database created successfully")
+def filter_to_minimal_docs(docs: List[Document]) -> List[Document]:
+    minimal_docs: List[Document] = []
+    for doc in docs:
+        src = doc.metadata.get("source")
+        minimal_docs.append(
+            Document(
+                page_content=doc.page_content,
+                metadata={"source": src}
+            )
+        )
+    return minimal_docs
 
 
-embeddings = HuggingFaceEmbeddings(
-    model_name="BAAI/bge-base-en-v1.5"
-)
+def text_split(extracted_data):
+    text_splitter = RecursiveCharacterTextSplitter(
+        chunk_size=500,
+        chunk_overlap=20
+    )
+    text_chunks = text_splitter.split_documents(extracted_data)
+    return text_chunks
 
-vectorstore = Chroma(
-    persist_directory="./adwa_db",
-    embedding_function=embeddings
-)
 
-retriever = vectorstore.as_retriever(search_kwargs={"k":3})
+class CustomEmbeddings:
+    def __init__(self, model_name="sentence-transformers/all-MiniLM-L6-v2"):
+        self.model = SentenceTransformer(model_name)
 
-llm = ChatGroq(
-    model="llama-3.3-70b-versatile",
-    temperature=0.1,
-    api_key=groq_api_key
-)
+    def embed_documents(self, texts):
+        embeddings = self.model.encode(texts)
+        return embeddings.tolist()
 
-print("setup Completed!")
+    def embed_query(self, text):
+        embedding = self.model.encode(text)
+        return embedding.tolist()
+
+
+def download_hugging_face_embeddings():
+    return CustomEmbeddings()

@@ -8,12 +8,6 @@ __pycache__/
 .env
 .env.*
 
-# Chroma/DB
-adwa_db/
-*.sqlite3
-*.db
-*.db-journal
-
 # VSCode/IDE
 .vscode/
 .idea/
