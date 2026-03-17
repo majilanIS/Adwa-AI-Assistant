@@ -8,19 +8,11 @@ from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import Chroma
 from langchain_groq import ChatGroq
 from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.runnables import RunnableParallel, RunnablePassthrough
+from langchain.chains.combine_documents import create_stuff_documents_chain
+from langchain.chains import create_retrieval_chain
 from prompt import prompt
 from langdetect import detect
 import traceback
-
-# Map each PDF filename to its Google Drive link
-pdf_links = {
-    "short historical note-2.pdf": "https://drive.google.com/file/d/17yCcBtWO840MSoW46_KmHr9bBkRekKVz/view?usp=sharing",
-    "paulos_milkias_getachew_metaferia_the_battle_ofbook4you.pdf": "https://drive.google.com/file/d/1wBZsQa2Ja_3ParQh59YDKEZjWsOvGrKc/view?usp=sharing",
-    "battle_of_adwa_overview.pdf": "https://drive.google.com/file/d/1o6BBKqGZHZCBkXSU-W3zNutGPGIe9L7S/view?usp=sharing",
-    "short history about battle of Adwa.pdf": "https://drive.google.com/file/d/1KI3oSXPYsAoDmwyuogb-tKLmWYfK7sD8/view?usp=sharing",
-    "The_Battle_of_Adwa_African_Victory_in_the_Age_of_Empire_Raymond.pdf": "https://drive.google.com/file/d/1okoxNtQgh8itpoTttLmu8F11W0AvWau1/view?usp=sharing"
-}
 
 # ========================
 # Flask Setup
@@ -93,13 +85,14 @@ llm = ChatGroq(
 
 prompt_template = ChatPromptTemplate.from_template(prompt)
 
-# document_chain: LLM + prompt
-document_chain = llm | prompt_template
+document_chain = create_stuff_documents_chain(
+    llm,
+    prompt_template
+)
 
-# rag_chain: RAG pipeline using RunnableParallel and RunnablePassthrough
-rag_chain = (
-    {"context": retriever, "question": RunnablePassthrough()}
-    | document_chain
+rag_chain = create_retrieval_chain(
+    retriever,
+    document_chain
 )
 
 # ========================
@@ -161,8 +154,13 @@ def chat():
         # Run RAG
         try:
 
-            result = rag_chain.invoke(message)
-            answer = result
+            result = rag_chain.invoke({
+                "input": message,
+                "question": message,
+                "language": language
+            })
+
+            answer = result.get("answer")
 
         except:
             answer = "I could not generate an answer."
@@ -215,7 +213,13 @@ def voice():
 
     try:
 
-        answer = rag_chain.invoke(text)
+        result = rag_chain.invoke({
+            "input": text,
+            "question": text,
+            "language": "en"
+        })
+
+        answer = result.get("answer")
 
         return jsonify({
             "response": answer
@@ -231,14 +235,25 @@ def voice():
 
 
 # ========================
+# Conversation History
+# ========================
+
+@app.route("/history", methods=["GET"])
+def get_history():
+
+    return jsonify({
+        "conversation": conversation
+    })
+
+
+# ========================
 # Run Server
 # ========================
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 10000))  
 
     app.run(
         host="0.0.0.0",
-        port=port,
-        debug=False
+        port=1986,
+        debug=True
     )
