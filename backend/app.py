@@ -11,8 +11,7 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain.chains import create_retrieval_chain
 from prompt import prompt
-from langdetect import detect
-import traceback
+
 
 # ========================
 # Flask Setup
@@ -134,12 +133,6 @@ def chat():
 
     try:
 
-        # Detect language
-        try:
-            language = detect(message)
-        except:
-            language = "en"
-
         # Retrieve documents
         try:
             docs = retriever.get_relevant_documents(message)
@@ -157,7 +150,6 @@ def chat():
             result = rag_chain.invoke({
                 "input": message,
                 "question": message,
-                "language": language
             })
 
             answer = result.get("answer")
@@ -189,9 +181,6 @@ def chat():
         })
 
     except Exception:
-
-        traceback.print_exc()
-
         return jsonify({
             "error": "Server error"
         }), 500
@@ -216,7 +205,6 @@ def voice():
         result = rag_chain.invoke({
             "input": text,
             "question": text,
-            "language": "en"
         })
 
         answer = result.get("answer")
@@ -226,9 +214,6 @@ def voice():
         })
 
     except Exception:
-
-        traceback.print_exc()
-
         return jsonify({
             "error": "Voice processing failed"
         }), 500
