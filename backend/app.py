@@ -132,13 +132,6 @@ def chat():
         return jsonify({"error": "Message is required"}), 400
 
     try:
-
-        # Detect language
-        try:
-            language = detect(message)
-        except:
-            language = "en"
-
         # Retrieve documents
         try:
             docs = retriever.get_relevant_documents(message)
