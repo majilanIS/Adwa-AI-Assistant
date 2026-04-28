@@ -6,20 +6,17 @@ import StarField from './components/StarField'
 function App() {
 
   const [showWelcome, setShowWelcome] = useState(true)
-  const [inputActive, setInputActive] = useState(false)
 
   // Handler to hide welcome when user types
   const handleInputFocus = () => {
     setShowWelcome(false)
-    setInputActive(true)
   }
   const handleInputBlur = () => {
-    setInputActive(false)
+    setShowWelcome(false)
   }
 
   const handleNewChat = () => {
     setShowWelcome(true)
-    setInputActive(false)
   }
 
   return (

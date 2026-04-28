@@ -19,7 +19,7 @@ function AIAssistantAnswer({ text, sources }) {
   let keyFacts = [];
   if (keyFactsMatch && keyFactsMatch[1]) {
     keyFacts = keyFactsMatch[1]
-      .split(/\n|•|\-/)
+      .split(/\n|•|-/)
       .map((fact) => fact.trim())
       .filter((fact) => fact.length > 0);
   }
