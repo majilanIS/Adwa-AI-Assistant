@@ -64,7 +64,7 @@ function AIAssistantAnswer({ text, sources }) {
 /* =========================
    MAIN CHAT COMPONENT
 ========================= */
-const Body = ({ onInputFocus, onInputBlur }) => {
+const Body = ({ onInputFocus, onInputBlur, resetSignal }) => {
 
   const [chat, setChat] = useState([]);
   const [input, setInput] = useState("");
@@ -80,6 +80,16 @@ const Body = ({ onInputFocus, onInputBlur }) => {
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chat]);
+
+  useEffect(() => {
+    setChat([]);
+    setInput("");
+    setLoading(false);
+    setError("");
+    if (inputRef.current) {
+      inputRef.current.textContent = "";
+    }
+  }, [resetSignal]);
 
   /* =========================
      SEND MESSAGE
@@ -268,11 +278,6 @@ const Body = ({ onInputFocus, onInputBlur }) => {
           <div className={styles.loadingText}>
             Thinking...
           </div>
-        </div>
-      )}
-      {error && (
-        <div className={styles.belowInputError}>
-          {error}
         </div>
       )}
     </main>

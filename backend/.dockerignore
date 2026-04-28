@@ -1,0 +1,9 @@
+venv
+.env
+__pycache__
+*.pyc
+adwa_db
+*.sqlite3
+.git
+node_modules
+frontend

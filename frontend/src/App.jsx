@@ -17,6 +17,11 @@ function App() {
     setInputActive(false)
   }
 
+  const handleNewChat = () => {
+    setShowWelcome(true)
+    setInputActive(false)
+  }
+
   return (
     <>
       <StarField />
@@ -38,7 +43,7 @@ function App() {
         }}>
         </div>
       )}
-      <Home onInputFocus={handleInputFocus} onInputBlur={handleInputBlur} />
+      <Home onInputFocus={handleInputFocus} onInputBlur={handleInputBlur} onNewChat={handleNewChat} />
     </>
   )
 }

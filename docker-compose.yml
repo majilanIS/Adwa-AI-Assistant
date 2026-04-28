@@ -1,0 +1,13 @@
+services:
+  backend:
+    build:
+      context: ./backend
+    ports:
+      - "10000:10000"
+    environment:
+      - PORT=10000
+      - GROQ_API_KEY=${GROQ_API_KEY}
+    volumes:
+      - ./backend/adwa_db:/app/adwa_db
+      - ./backend/data:/app/data:ro
+    restart: unless-stopped

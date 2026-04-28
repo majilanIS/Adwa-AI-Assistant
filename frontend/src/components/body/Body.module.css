@@ -1,72 +1,53 @@
-/* Welcome message centered on page */
+/* =========================
+LAYOUT
+========================= */
+
+.body {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 180px);
+  width: 100%;
+}
+
 .welcomeMessage {
   position: absolute;
-  top: 50%;
+  top: 48%;
   left: 50%;
-  transform: translate(-50%, calc(-50% - 25px));
+  transform: translate(-50%, -50%);
   z-index: 10;
-  width: 100%;
-  max-width: 600px;
-  background: rgba(255,255,255,0.10);
+  width: min(600px, calc(100% - 2rem));
+  background: rgba(255, 255, 255, 0.1);
   border-radius: 1.5rem;
-  box-shadow: 0 2px 24px 0 rgba(255, 152, 0, 0.10);
+  box-shadow: 0 2px 24px 0 rgba(255, 152, 0, 0.1);
   text-align: center;
   color: #fff;
   font-family: var(--sans);
-  padding: 2.5rem 2rem 1.5rem 2rem;
+  padding: 2.5rem 2rem 1.5rem;
 }
+
 .welcomeMessage h2 {
   font-size: 2.1rem;
   font-weight: 700;
   margin-bottom: 0.7rem;
   color: var(--orange);
 }
+
 .welcomeMessage p {
   font-size: 1.15rem;
   color: #fff;
   opacity: 0.92;
   margin: 0;
 }
-/* =========================
-GLOBAL
-========================= */
-
-*, *::before, *::after {
-  box-sizing: border-box;
-}
-
-
-body {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  min-height: 0;
-}
 
 /* =========================
 CHAT AREA
 ========================= */
 
-
-
 .chatContainer {
-  /* User and Assistant Emojis */
-  .userEmoji {
-    align-self: flex-end;
-    font-size: 1.7rem;
-    margin-right: 0.5rem;
-    margin-bottom: 2px;
-  }
-  .assistantEmoji {
-    align-self: flex-start;
-    font-size: 1.7rem;
-    margin-left: 0.5rem;
-    margin-bottom: 2px;
-  }
   flex: 1 1 auto;
   overflow-y: auto;
-  padding: 120px 24px 100px 24px; /* top padding for header, bottom padding for input+footer */
+  padding: 120px 24px 120px;
   display: flex;
   flex-direction: column;
   gap: 18px;
@@ -76,40 +57,26 @@ CHAT AREA
   color: #fff;
 }
 
-/* =========================
-MESSAGE CONTAINERS
-========================= */
-
 .userMessageContainer {
   display: flex;
   justify-content: flex-end;
+  align-items: flex-end;
+  gap: 0.5rem;
   color: #fff;
 }
 
 .aiMessageContainer {
   display: flex;
   justify-content: flex-start;
+  align-items: flex-end;
+  gap: 0.5rem;
   color: #fff;
 }
 
-
-/* =========================
-MESSAGE BUBBLES
-========================= */
-
-
-.userBubble {
-  align-self: flex-end;
-  /* background: linear-gradient(120deg, var(--orange) 0%, var(--brown-light) 100%); */
-  color: #fff;
-  padding: 13px 18px;
-  border-radius: 18px 18px 6px 18px;
-  max-width: 70%;
-  word-wrap: break-word;
-  font-size: 15px;
-  font-family: var(--sans);
-  box-shadow: 0 2px 12px 0 rgba(255, 152, 0, 0.10);
-  /* border: 1.5px solid var(--orange-light); */
+.userEmoji,
+.assistantEmoji {
+  font-size: 1.7rem;
+  margin-bottom: 2px;
 }
 
 .userBubble {
@@ -118,17 +85,15 @@ MESSAGE BUBBLES
   color: #fff;
   padding: 13px 18px;
   border-radius: 18px 18px 6px 18px;
-  max-width: 70%;
+  max-width: 72%;
   word-wrap: break-word;
+  overflow-wrap: anywhere;
   font-size: 15px;
   font-family: var(--sans);
   box-shadow: none;
   border: none;
+  text-align: left;
 }
-
-/* =========================
-AI FORMATTED RESPONSE
-========================= */
 
 .aiBubble {
   align-self: flex-start;
@@ -136,13 +101,25 @@ AI FORMATTED RESPONSE
   color: #fff;
   padding: 16px 20px;
   border-radius: 18px 18px 18px 6px;
-  max-width: 70%;
+  max-width: 72%;
   word-wrap: break-word;
+  overflow-wrap: anywhere;
   font-size: 15px;
   font-family: var(--sans);
   box-shadow: none;
   border: none;
   text-align: left;
+}
+
+.aiTitle {
+  font-weight: 700;
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.aiSummary {
+  font-size: 0.96rem;
+  margin-bottom: 0.7rem;
 }
 
 .aiDetails {
@@ -169,39 +146,36 @@ AI FORMATTED RESPONSE
   margin-top: 18px;
   color: #2563eb;
   font-weight: 500;
+  text-align: left;
   border-top: 1px solid #e0e0e0;
   padding-top: 10px;
-  text-align: left;
+}
+
+.sources a {
+  color: #93c5fd;
 }
 
 /* =========================
 INPUT AREA
 ========================= */
 
-/* =========================
-INPUT AREA (STICKY BOTTOM)
-========================= */
-
-/* INPUT AREA (FIXED AT BOTTOM) */
 .inputAreaRow {
-  position: fixed;      
-  bottom: 60px;            
+  position: fixed;
+  bottom: 56px;
   left: 0;
   width: 100%;
   z-index: 200;
   display: flex;
   justify-content: center;
   padding: 10px 20px;
-  /* background: rgba(0, 0, 0, 0.6);  */
 }
 
-/* INPUT WRAPPER */
 .inputWrapper {
   display: flex;
   align-items: center;
   width: 100%;
-  max-width: 600px;
-  background: rgba(255,255,255,0.95);
+  max-width: 720px;
+  background: rgba(255, 255, 255, 0.95);
   border-radius: 32px;
   border: 1.5px solid var(--brown-light);
   padding: 6px 16px 6px 22px;
@@ -209,7 +183,6 @@ INPUT AREA (STICKY BOTTOM)
   box-shadow: 0 2px 12px rgba(255, 152, 0, 0.08);
 }
 
-/* INPUT FIELD */
 .inputField {
   flex: 1;
   border: none;
@@ -231,14 +204,17 @@ INPUT AREA (STICKY BOTTOM)
   unicode-bidi: isolate;
 }
 
-/* placeholder */
 .inputField[contenteditable="true"]:empty:before {
   content: attr(data-placeholder);
   color: #aaa;
   pointer-events: none;
 }
 
-/* SEND BUTTON */
+.voiceBarWrapper {
+  display: flex;
+  align-items: center;
+}
+
 .sendButton {
   border: none;
   background: linear-gradient(120deg, var(--orange) 0%, var(--brown) 100%);
@@ -264,22 +240,8 @@ INPUT AREA (STICKY BOTTOM)
   cursor: not-allowed;
 }
 
-/* Adjust chat padding so messages are not hidden behind input */
-.chatContainer {
-  flex: 1 1 auto;
-  overflow-y: auto;
-  padding: 120px 24px 100px 24px; /* top = header, bottom = input area */
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-  min-height: 0;
-  border-radius: 1.2rem;
-  background: transparent;
-  color: #fff;
-}
-
 /* =========================
-LOADING OVERLAY
+STATUS
 ========================= */
 
 .overlaySpinner {
@@ -287,11 +249,9 @@ LOADING OVERLAY
   left: 0;
   right: 0;
   bottom: 160px;
-
   display: flex;
   flex-direction: column;
   align-items: center;
-
   z-index: 300;
   pointer-events: none;
 }
@@ -300,134 +260,174 @@ LOADING OVERLAY
   color: #2563eb;
   font-weight: 500;
   font-size: 15px;
-
   background: #fff;
-
   border-radius: 8px;
-
   padding: 4px 12px;
-
-  box-shadow: 0 2px 8px rgba(37,99,235,0.04);
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.04);
 }
-
-/* =========================
-ERROR OVERLAY
-========================= */
 
 .overlayError {
   position: absolute;
-
   left: 0;
   right: 0;
   bottom: 160px;
-
   color: #fff;
-
   background: #e11d48;
-
   font-weight: 500;
-
   font-size: 15px;
-
   border-radius: 8px;
-
   padding: 8px 16px;
-
   text-align: center;
-
   z-index: 301;
-
-  box-shadow: 0 2px 8px rgba(225,29,72,0.12);
+  box-shadow: 0 2px 8px rgba(225, 29, 72, 0.12);
 }
-
-/* =========================
-STATUS BELOW INPUT
-========================= */
 
 .belowInputSpinner {
   position: fixed;
-
   left: 0;
   right: 0;
-
-  bottom: 30px;
-
+  bottom: 18px;
   display: flex;
   justify-content: center;
-
   z-index: 350;
-
   pointer-events: none;
 }
 
 .belowInputError {
   position: fixed;
-
   left: 0;
   right: 0;
-
-  bottom: 30px;
-
+  bottom: 18px;
   color: #fff;
-
   background: #e11d48;
-
   font-weight: 500;
-
   font-size: 15px;
-
   border-radius: 8px;
-
   padding: 8px 16px;
-
   text-align: center;
-
   z-index: 351;
-
-  box-shadow: 0 2px 8px rgba(225,29,72,0.12);
-}
-.sources{
-  font-size: 14px;
-  margin-top: 18px;
-  color: #2563eb;
+  box-shadow: 0 2px 8px rgba(225, 29, 72, 0.12);
 }
 
-/* Responsive chat and input for mobile */
-@media (max-width: 700px) {
+/* =========================
+TABLET
+========================= */
+
+@media (max-width: 1024px) {
+  .body {
+    min-height: calc(100vh - 150px);
+  }
+
   .chatContainer {
-    padding: 80px 6px 80px 6px;
+    padding: 110px 14px 112px;
+    gap: 14px;
+  }
+
+  .welcomeMessage {
+    width: min(560px, calc(100% - 2rem));
+    padding: 1.8rem 1.4rem 1.2rem;
+  }
+
+  .welcomeMessage h2 {
+    font-size: 1.7rem;
+  }
+
+  .welcomeMessage p {
+    font-size: 1rem;
+  }
+
+  .aiBubble,
+  .userBubble {
+    max-width: 82%;
+  }
+
+  .inputAreaRow {
+    bottom: 52px;
+    padding: 8px 10px;
+  }
+
+  .inputWrapper {
+    max-width: 92%;
+  }
+}
+
+/* =========================
+MOBILE
+========================= */
+
+@media (max-width: 768px) {
+  .body {
+    min-height: calc(100vh - 132px);
+  }
+
+  .chatContainer {
+    padding: 102px 8px 108px;
     border-radius: 0;
     gap: 10px;
   }
-  .userBubble, .aiBubble {
+
+  .welcomeMessage {
+    top: 42%;
+    width: calc(100% - 1rem);
+    padding: 1.1rem 0.95rem;
+    border-radius: 1rem;
+  }
+
+  .welcomeMessage h2 {
+    font-size: 1.2rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .welcomeMessage p {
+    font-size: 0.9rem;
+  }
+
+  .userEmoji,
+  .assistantEmoji {
+    font-size: 1.35rem;
+  }
+
+  .userBubble,
+  .aiBubble {
     font-size: 14px;
     padding: 10px 12px;
     border-radius: 14px;
-    max-width: 90%;
+    max-width: 92%;
   }
+
+  .aiDetails,
+  .aiKeyFacts {
+    padding-left: 8px;
+    font-size: 14px;
+  }
+
   .inputAreaRow {
-    padding: 4px 4px;
-    bottom: 50px;
+    padding: 6px;
+    bottom: 46px;
   }
+
   .inputWrapper {
-    max-width: 98vw;
+    max-width: 100%;
     padding: 4px 8px 4px 12px;
     border-radius: 24px;
     gap: 6px;
   }
+
   .inputField {
     font-size: 15px;
     min-height: 36px;
     max-height: 80px;
     padding: 8px 0;
   }
+
   .sendButton {
     width: 36px;
     height: 36px;
-    font-size: 1.1rem;
     border-radius: 50%;
   }
-  .voiceBarWrapper {
-    margin-right: 2px;
+
+  .belowInputSpinner,
+  .belowInputError {
+    bottom: 10px;
   }
 }

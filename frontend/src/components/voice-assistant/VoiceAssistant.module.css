@@ -2,6 +2,7 @@
   display:flex;
   align-items:center;
   gap:10px;
+  min-width: 0;
 }
 
 /* microphone button */
@@ -114,4 +115,39 @@
   border-radius: 8px;
   font-size: 14px;
   margin-top: 10px;
+  max-width: 260px;
+  white-space: normal;
+}
+
+@media (max-width: 1024px) {
+  .error_message {
+    max-width: 220px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 768px) {
+  .voiceAssistantContainer {
+    gap: 6px;
+  }
+
+  .microphone_btn {
+    width: 34px;
+    height: 34px;
+  }
+
+  .waveContainer span {
+    width: 3px;
+    height: 12px;
+  }
+
+  .error_message {
+    position: fixed;
+    left: 12px;
+    right: 12px;
+    bottom: 96px;
+    margin-top: 0;
+    max-width: none;
+    z-index: 360;
+  }
 }

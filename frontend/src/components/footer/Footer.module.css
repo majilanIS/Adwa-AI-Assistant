@@ -16,6 +16,11 @@
   gap: 2px;
 }
 
+.footerText {
+  margin: 0;
+  line-height: 1.25;
+}
+
 .inputAreaRow {
   position: fixed; /* fixed just above footer */
   bottom: 2.8rem; /* adjust so it's just above the footer */
@@ -38,4 +43,22 @@
   padding: 6px 16px 6px 22px;
   gap: 8px;
   box-shadow: 0 2px 12px rgba(255, 152, 0, 0.08);
+}
+
+@media (max-width: 1024px) {
+  .footer {
+    font-size: 11px;
+    padding: 0.4rem 0.75rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .footer {
+    font-size: 10px;
+    padding: 0.35rem 0.5rem;
+  }
+
+  .footerText {
+    max-width: 92vw;
+  }
 }
