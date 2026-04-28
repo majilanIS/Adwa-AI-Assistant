@@ -4,7 +4,7 @@ import { FiSend } from "react-icons/fi";
 import axios from "axios";
 import VoiceAssistant from "../voice-assistant/VoiceAssistant";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:1986";
+const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:10000";
 
 /* =========================
    AI ANSWER FORMATTER

@@ -125,17 +125,20 @@ def new_chat():
 @app.route("/chat", methods=["POST"])
 def chat():
 
+    import traceback
     data = request.get_json()
     message = data.get("message")
 
     if not message:
-        return jsonify({"error": "Message is required"}), 400
+        return jsonify({"success": False, "error": "Message is required"}), 400
 
     try:
         # Retrieve documents
         try:
-            docs = retriever.get_relevant_documents(message)
-        except:
+            docs = retriever.invoke(message)
+        except Exception as e:
+            print("[ERROR] Document retrieval failed:", e)
+            traceback.print_exc()
             docs = []
 
         sources = list(set([
@@ -145,20 +148,18 @@ def chat():
 
         # Run RAG
         try:
-
             result = rag_chain.invoke({
                 "input": message,
                 "question": message,
             })
-
             answer = result.get("answer")
-
-        except:
+        except Exception as e:
+            print("[ERROR] RAG chain failed:", e)
+            traceback.print_exc()
             answer = "I could not generate an answer."
 
         # Out-of-scope protection
         if not answer or answer.lower() in ["none", "none."]:
-
             answer = "I'm sorry, I can only answer questions about the Battle of Adwa and Ethiopian history."
             sources = []
 
@@ -175,12 +176,16 @@ def chat():
         })
 
         return jsonify({
+            "success": True,
             "response": answer,
             "sources": sources
         })
 
-    except Exception:
+    except Exception as e:
+        print("[ERROR] /chat endpoint failed:", e)
+        traceback.print_exc()
         return jsonify({
+            "success": False,
             "error": "Server error"
         }), 500
 
