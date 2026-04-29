@@ -1,17 +1,18 @@
 import os
+import shutil
+import threading
 from dotenv import load_dotenv
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from langchain_community.document_loaders import PyPDFDirectoryLoader
-from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import Chroma
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_groq import ChatGroq
 from langchain_core.prompts import ChatPromptTemplate
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain.chains import create_retrieval_chain
 from prompt import prompt
-
+from sentence_transformers import SentenceTransformer
 
 # ========================
 # Flask Setup
@@ -22,29 +23,51 @@ CORS(app)
 # ========================
 # Load Environment
 # ========================
-load_dotenv()
+if os.getenv("ENV") != "production":
+    load_dotenv()
+
 groq_api_key = os.getenv("GROQ_API_KEY")
 
 if not groq_api_key:
-    raise ValueError("GROQ_API_KEY not found in .env")
+    raise RuntimeError("GROQ_API_KEY is not set")
 
-# ========================
-# Embeddings & Vector DB
-# ========================
-embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
+_resources_lock = threading.Lock()
+_resources = None
+_resources_error = None
 
-persist_directory = "./adwa_db"
 
-if os.path.exists(persist_directory) and os.listdir(persist_directory):
+class SentenceTransformerEmbeddings:
 
-    vectorstore = Chroma(
-        persist_directory=persist_directory,
-        embedding_function=embeddings
-    )
+    def __init__(self, model_name="all-MiniLM-L6-v2"):
+        self._model = SentenceTransformer(model_name)
 
-    print("Vector database loaded.")
+    def embed_documents(self, texts):
+        return self._model.encode(
+            texts,
+            convert_to_tensor=False,
+            normalize_embeddings=True
+        ).tolist()
 
-else:
+    def embed_query(self, text):
+        return self._model.encode(
+            [text],
+            convert_to_tensor=False,
+            normalize_embeddings=True
+        )[0].tolist()
+
+
+def _build_vectorstore(embeddings, persist_directory):
+    if os.path.exists(persist_directory) and os.listdir(persist_directory):
+        try:
+            vectorstore = Chroma(
+                persist_directory=persist_directory,
+                embedding_function=embeddings
+            )
+            print("Vector database loaded.")
+            return vectorstore
+        except Exception as error:
+            print("[WARN] Existing vector database is incompatible, rebuilding:", error)
+            shutil.rmtree(persist_directory, ignore_errors=True)
 
     print("Creating new vector database...")
 
@@ -61,7 +84,7 @@ else:
     for i, doc in enumerate(chunks):
         doc.metadata["source"] = doc.metadata.get(
             "source",
-            f"Document-{i+1}"
+            f"Document-{i + 1}"
         )
 
     vectorstore = Chroma.from_documents(
@@ -71,28 +94,61 @@ else:
     )
 
     print("Vector database created.")
+    return vectorstore
 
-# ========================
-# Retriever & LLM
-# ========================
-retriever = vectorstore.as_retriever(search_kwargs={"k": 3})
+def get_resources():
+    global _resources
+    global _resources_error
 
-llm = ChatGroq(
-    model_name="llama-3.1-8b-instant",
-    groq_api_key=groq_api_key
-)
+    if _resources is not None:
+        return _resources
 
-prompt_template = ChatPromptTemplate.from_template(prompt)
+    if _resources_error is not None:
+        raise _resources_error
 
-document_chain = create_stuff_documents_chain(
-    llm,
-    prompt_template
-)
+    with _resources_lock:
+        if _resources is not None:
+            return _resources
 
-rag_chain = create_retrieval_chain(
-    retriever,
-    document_chain
-)
+        if _resources_error is not None:
+            raise _resources_error
+
+        try:
+            embeddings = SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2")
+            persist_directory = "./adwa_db_v2"
+
+            vectorstore = _build_vectorstore(embeddings, persist_directory)
+
+            retriever = vectorstore.as_retriever(search_kwargs={"k": 3})
+
+            llm = ChatGroq(
+                model_name="llama-3.1-8b-instant",
+                groq_api_key=groq_api_key
+            )
+
+            prompt_template = ChatPromptTemplate.from_template(prompt)
+
+            document_chain = create_stuff_documents_chain(
+                llm,
+                prompt_template
+            )
+
+            rag_chain = create_retrieval_chain(
+                retriever,
+                document_chain
+            )
+
+            _resources = {
+                "retriever": retriever,
+                "rag_chain": rag_chain,
+            }
+
+            return _resources
+
+        except Exception as error:
+            _resources_error = error
+            print("[ERROR] Failed to initialize AI resources:", error)
+            raise
 
 # ========================
 # Conversation Memory
@@ -105,7 +161,10 @@ conversation = []
 
 @app.route("/", methods=["GET"])
 def home():
-    return jsonify({"message": "Adwa AI Backend Running"})
+    return jsonify({
+        "message": "Adwa AI Backend Running",
+        "ready": _resources is not None,
+    })
 
 
 # Start new chat
@@ -132,7 +191,26 @@ def chat():
     if not message:
         return jsonify({"success": False, "error": "Message is required"}), 400
 
+    if _resources is None:
+        try:
+            get_resources()
+        except Exception:
+            return jsonify({
+                "success": False,
+                "error": "AI resources are still loading. Please try again in a moment."
+            }), 503
+
+        if _resources is None:
+            return jsonify({
+                "success": False,
+                "error": "AI resources are still loading. Please try again in a moment."
+            }), 503
+
     try:
+        resources = get_resources()
+        retriever = resources["retriever"]
+        rag_chain = resources["rag_chain"]
+
         # Retrieve documents
         try:
             docs = retriever.invoke(message)
@@ -204,8 +282,22 @@ def voice():
     if not text:
         return jsonify({"error": "Text is required"}), 400
 
-    try:
+    if _resources is None:
+        try:
+            get_resources()
+        except Exception:
+            return jsonify({
+                "error": "AI resources are still loading. Please try again in a moment."
+            }), 503
 
+        if _resources is None:
+            return jsonify({
+                "error": "AI resources are still loading. Please try again in a moment."
+            }), 503
+
+    try:
+        resources = get_resources()
+        rag_chain = resources["rag_chain"]
         result = rag_chain.invoke({
             "input": text,
             "question": text,
@@ -249,3 +341,7 @@ if __name__ == "__main__":
         port=port,
         debug=False
     )
+
+else:
+    warmup_thread = threading.Thread(target=lambda: get_resources(), daemon=True)
+    warmup_thread.start()

@@ -22,3 +22,5 @@ Thumbs.db
 # Misc
 *.bak
 *.swp
+adwa_db/
+adwa_db_v2/

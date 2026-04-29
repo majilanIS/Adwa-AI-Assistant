@@ -118,6 +118,8 @@ const Body = ({ onInputFocus, onInputBlur, resetSignal }) => {
 
       const res = await axios.post(`${API_URL}/chat`, {
         message: message
+      }, {
+        timeout: 60000
       });
 
       const aiResponse = res.data?.response || "No response from server.";
