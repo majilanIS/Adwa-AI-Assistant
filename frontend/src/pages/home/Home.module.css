@@ -1,7 +1,11 @@
+/* Bounded to the viewport so the transcript inside can own the scrolling.
+   With min-height the column grew instead, and messages slid underneath the
+   composer. */
 .home {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  height: 100svh;
+  min-height: 0;
   color: #f3f4f6;
   position: relative;
   overflow: hidden;
@@ -17,28 +21,26 @@
   min-height: 0;
   background: transparent;
   border-radius: 1.5rem;
-  margin: 2.5rem 2.5rem 1.5rem 2.5rem;
+  /* Top clears the fixed header row. Bottom is kept tight so the composer sits
+     low, just above the fixed footer, the way it does in other chat apps. */
+  margin: 2.5rem 2.5rem 0.35rem;
   box-shadow: none;
-  padding: 2.5rem 2rem 2rem 2rem;
+  padding: 2.5rem 2rem 0.5rem;
   z-index: 1;
 }
 
 @media (max-width: 1024px) {
   .bodyContainer {
-    margin: 1.5rem 1rem 1rem;
-    padding: 1.6rem 1rem 1.2rem;
+    margin: 1.5rem 1rem 0.3rem;
+    padding: 1.6rem 1rem 0.4rem;
     border-radius: 1rem;
   }
 }
 
 @media (max-width: 768px) {
-  .home {
-    min-height: 100vh;
-  }
-
   .bodyContainer {
-    margin: 1rem 0.35rem 0.75rem;
-    padding: 1rem 0.45rem 0.8rem;
+    margin: 1rem 0.35rem 0.25rem;
+    padding: 1rem 0.45rem 0.35rem;
     border-radius: 0.8rem;
   }
 }

@@ -3,6 +3,9 @@ venv
 __pycache__
 *.pyc
 adwa_db
+adwa_db_v2
+models
+.cache
 *.sqlite3
 .git
 node_modules

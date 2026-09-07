@@ -94,6 +94,9 @@ HEADER
 NEW CHAT BUTTON
 ========================= */
 .navItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
   background: linear-gradient(120deg, var(--orange) 0%, var(--brown) 100%);
   color: #fff;
   border: none;
@@ -101,10 +104,16 @@ NEW CHAT BUTTON
   padding: 10px 18px;
   font-size: 15px;
   font-weight: 600;
+  font-family: var(--sans);
   cursor: pointer;
   transition: all 0.25s ease;
   box-shadow: 0 4px 12px rgba(255, 152, 0, 0.3);
   min-height: 42px;
+}
+
+.navItem:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
 }
 
 /* Hover effect */
@@ -189,6 +198,20 @@ NEW CHAT BUTTON
     border-radius: 10px;
     min-width: 44px;
     min-height: 44px;
+    justify-content: center;
     box-shadow: 0 2px 8px 0 rgba(255, 152, 0, 0.13);
+  }
+}
+
+/* Narrow phones: the icon carries the meaning, so drop the label rather than
+   let the button crowd the brand. The accessible name comes from the title. */
+@media (max-width: 420px) {
+  .navItemLabel {
+    display: none;
+  }
+
+  .navFixed .navItem {
+    padding: 0.45rem;
+    gap: 0;
   }
 }

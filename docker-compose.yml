@@ -13,8 +13,15 @@ services:
     environment:
       - PORT=10000
 
-    volumes:
-      - ./backend/adwa_db_v2:/app/adwa_db_v2
-      - ./backend/data:/app/data:ro
+    # No volume mounts: the vector database and the embedding model are built
+    # into the image (phase 1). Mounting a host directory over /app/adwa_db_v2
+    # would hide the prebuilt index and force a rebuild at request time.
+
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request;urllib.request.urlopen('http://127.0.0.1:10000/ready',timeout=5)\""]
+      interval: 15s
+      timeout: 10s
+      retries: 20
+      start_period: 60s
 
     restart: unless-stopped

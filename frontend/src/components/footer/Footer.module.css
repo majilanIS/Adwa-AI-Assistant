@@ -5,10 +5,11 @@
   padding: 0.35rem 1rem; /* reduce height */
   font-size: 10px;
   backdrop-filter: blur(6px);
-  position: fixed; /* fixed at bottom */
-  left: 0;
-  bottom: 0;
-  width: 100vw;
+  /* In flow as the last row of the viewport-height column, so it can no longer
+     overlap the composer sitting directly above it. */
+  position: relative;
+  flex: 0 0 auto;
+  width: 100%;
   z-index: 200;
   display: flex;
   flex-direction: column;
@@ -21,29 +22,10 @@
   line-height: 1.25;
 }
 
-.inputAreaRow {
-  position: fixed; /* fixed just above footer */
-  bottom: 2.8rem; /* adjust so it's just above the footer */
-  left: 0;
-  width: 100%;
-  z-index: 210;
-  display: flex;
-  justify-content: center;
-  padding: 0 1rem;
-}
-
-.inputWrapper {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  max-width: 600px;
-  background: rgba(255,255,255,0.95);
-  border-radius: 32px;
-  border: 1.5px solid var(--brown-light);
-  padding: 6px 16px 6px 22px;
-  gap: 8px;
-  box-shadow: 0 2px 12px rgba(255, 152, 0, 0.08);
-}
+/* .inputAreaRow / .inputWrapper used to be duplicated here. CSS module class
+   names are scoped per file, so these copies never applied to the composer -
+   the live rules are in Body.module.css. Removed to avoid editing the wrong
+   file next time. */
 
 @media (max-width: 1024px) {
   .footer {

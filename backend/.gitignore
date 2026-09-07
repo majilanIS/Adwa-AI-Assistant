@@ -7,6 +7,9 @@ __pycache__/
 # Environment
 .env
 .env.*
+venv/
+.venv/
+env/
 
 # VSCode/IDE
 .vscode/
@@ -24,3 +27,7 @@ Thumbs.db
 *.swp
 adwa_db/
 adwa_db_v2/
+
+# Build-time artifacts (phase 1 output, baked into the Docker image)
+models/
+.cache/
