@@ -2,7 +2,7 @@ import React, { useState, useRef } from "react";
 import MicrophoneIcon from "./MicrophoneIcon";
 import styles from "./VoiceAssistant.module.css";
 
-const API_URL = "http://127.0.0.1:1986";
+const API_URL = import.meta.env.VITE_VOICE_API_URL || "http://127.0.0.1:1986";
 
 const VoiceAssistant = ({ onVoiceInput, loading }) => {
 

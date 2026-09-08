@@ -13,12 +13,14 @@ At serving time this module only *loads* what phase 1 already produced, so a
 request never pays for model downloads or document embedding.
 """
 
+import glob
 import os
 import re
 import shutil
 
 from langchain_community.document_loaders import PyPDFDirectoryLoader
 from langchain_community.vectorstores import Chroma
+from langchain_core.documents import Document
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_groq import ChatGroq
 from langchain_text_splitters import RecursiveCharacterTextSplitter
@@ -117,7 +119,34 @@ def build_index(embeddings=None, data_dir=DATA_DIR, persist_directory=PERSIST_DI
     print(f"Loading documents from {data_dir}")
     loader = PyPDFDirectoryLoader(path=data_dir, glob="*.pdf")
     documents = loader.load()
-    print(f"Loaded {len(documents)} pages.")
+    print(f"Loaded {len(documents)} pages from PDFs.")
+
+    # Plain-text notes alongside the PDFs. Useful for short, targeted material
+    # that would otherwise have to be turned into a PDF just to be indexed.
+    text_files = sorted(
+        path
+        for extension in ("*.md", "*.txt")
+        for path in glob.glob(os.path.join(data_dir, extension))
+    )
+
+    for path in text_files:
+        with open(path, encoding="utf-8") as handle:
+            content = handle.read().strip()
+
+        if not content:
+            continue
+
+        documents.append(
+            Document(
+                page_content=content,
+                metadata={"source": path}
+            )
+        )
+
+    if text_files:
+        print(f"Loaded {len(text_files)} text document(s).")
+
+    print(f"Loaded {len(documents)} documents in total.")
 
     splitter = RecursiveCharacterTextSplitter(
         chunk_size=CHUNK_SIZE,
