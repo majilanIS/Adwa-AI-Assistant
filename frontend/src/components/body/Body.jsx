@@ -11,6 +11,7 @@ const SUGGESTIONS = [
   "Where did the Battle of Adwa take place?",
   "Why was Adwa important for Africa?",
   "What role did Empress Taytu play?",
+  "What was Ras Alula Aba Nega's role in the Battle of Adwa?",
 ];
 
 /* =========================
