@@ -9,6 +9,10 @@ permissions:
   contents: read
   packages: write
 
+concurrency:
+  group: cd-backend-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   publish-backend-image:
     name: Publish Backend Image to GHCR
@@ -46,3 +50,5 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
