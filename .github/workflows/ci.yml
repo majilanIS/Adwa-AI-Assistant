@@ -60,6 +60,11 @@ jobs:
       - name: Compile Python sources
         run: python -m compileall -q app.py build_index.py prompt.py rag.py
 
+      # The shared pre-build command is exercised inside the Docker build job
+      # below; here we only sanity-check that the script itself parses.
+      - name: Check shared pre-build script
+        run: bash -n build_index.sh
+
   docker:
     name: Docker Build Check
     runs-on: ubuntu-latest

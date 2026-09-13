@@ -72,11 +72,12 @@ ENV EMBEDDING_MODEL_DIR=/app/models/all-MiniLM-L6-v2
 ENV HF_HOME=/tmp/hf
 
 # Only the files phase 1 actually reads are copied here, so editing app.py does
-# not invalidate this layer and force the PDFs to be re-embedded.
-COPY prompt.py rag.py build_index.py /app/
+# not invalidate this layer and force the PDFs to be re-embedded. build_index.sh
+# is the single pre-build command shared with CI - run it as the build step.
+COPY prompt.py rag.py build_index.py build_index.sh /app/
 COPY data /app/data
 
-RUN python build_index.py && rm -rf /tmp/hf
+RUN ./build_index.sh
 
 
 # =============================================================================
