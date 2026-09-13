@@ -77,7 +77,7 @@ ENV HF_HOME=/tmp/hf
 COPY prompt.py rag.py build_index.py build_index.sh /app/
 COPY data /app/data
 
-RUN ./build_index.sh
+RUN sh ./build_index.sh
 
 
 # =============================================================================
